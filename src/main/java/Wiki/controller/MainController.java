@@ -1,5 +1,6 @@
 package Wiki.controller;
 
+import Wiki.module.Category;
 import Wiki.module.Wiki;
 import Wiki.repositories.CategoryRepository;
 import Wiki.repositories.WikiRepository;
@@ -15,6 +16,8 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class MainController {
+
+    final String PATH ="D:\\JSON\\ruwiki-20221212-cirrussearch-general.json";
     @Autowired
     final Parser parser;
     @Autowired
@@ -25,8 +28,8 @@ public class MainController {
     final CategoryRepository categoryRepository;
 
 
-    @GetMapping("/wiki/{title}")
-    public Object getInfo(@PathVariable String title, String info) {
+    @GetMapping("/info/{title}")
+    public Object getInfoTitle(@PathVariable String title, String info) {
         Wiki wiki = wikiRepository.findByTitle(title);
         if (info != null) {
             return wiki;
@@ -34,17 +37,25 @@ public class MainController {
         return wiki.toString();
     }
 
-    @GetMapping("/update")
-    public String update(@RequestParam(name = "path", required = false) String path) {
-        path = "D:\\JSON\\ruwiki-20221212-cirrussearch-general.json";
-        if (path != null) {
-            parser.parserJSON(path);
-            return "update";
+    @GetMapping("/info/{category}")
+    public Object getInfoCat(@PathVariable String cat, String info) {
+        Category category = categoryRepository.findByCategory(cat);
+        if (info != null) {
+            return cat;
         }
-        return "null";
+        return cat.toString();
+    }
+
+    @GetMapping("/parse")
+    public String parse() {
+        if (PATH != null) {
+            parser.parserJSON(PATH);
+            return "parse";
+        }
+        return null;
     }
     @GetMapping("/")
-    public String showTitle(Model model){
+    public String showAllTitle(Model model){
         model.addAttribute("title",wikiService.findAllByTitle());
         return "wiki";
     }
